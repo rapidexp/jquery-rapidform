@@ -12,13 +12,13 @@ Built for [jQuery](http://jquery.com)
 
 
 Change the type of submit to "button" in the form set this plugin, you will get validations via ajax and direct drawing.
-jQuery UI Dialog will be available to you more effectively!
+And jQuery UI Dialog will be available to you more effectively!
 
 ## Bootstrap Form Elements
 
 This plugin assumes a form field of the following structure.
 
-When the field has an error, it sets has-error class in form-group, and appends a message to help-block.
+When the field has an error, it sets has-error class in form-group, and appends a message to help-block.  
 Of course you may customize with the plugin options.
 
     <div class="form-group">
@@ -61,8 +61,7 @@ The template is a line data including {valiable}.
         <td class="name">{name}</td>
     </tr>
 
-You must exhibit where of the line a variable is included in with data-template attribute.
-
+You must exhibit where of the line a variable is included in with data-template attribute.  
 The data-raw attribute is sequence of the field values used when editing button was clicked.
 
 
@@ -72,19 +71,15 @@ You must return the following arrangements in the function of the controller.
 
     reutrn json_encode(array('relaod' => true));
 
-### errors
-
+* errors:  
 Associative array of a field name and the message.
 
-### reload
-
+* reload:  
 The true reloads a page.
 
-### redirect
-
+* redirect:  
 The url string of the redirection.
 
-### raw
-
+* raw:  
 Associative array of a field name and the value when editiong.
 
