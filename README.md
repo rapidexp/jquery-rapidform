@@ -57,9 +57,10 @@ Refer to the source text.
 * You must exhibit where of the line a variable is included in with data-template attribute.
 * The data-raw attribute is sequence of the field values used when editing button was clicked.
 
+
     <tr id="template" style="display:none"
         data-template="{{{json_encode(array('.link a'=>'data-action,data-row','.name'=>'text'))}}}">
-        <td class="link"><a data-action="user/hoge/{id}/edit" data-raw="">編集</a></td>
+        <td class="link"><a data-action="user/hoge/{id}/edit" data-raw="">Edit</a></td>
         <td class="name">{name}</td>
     </tr>
 
