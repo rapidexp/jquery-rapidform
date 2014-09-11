@@ -16,10 +16,10 @@ jQuery UI Dialog will be available to you more effectively!
 
 ## Bootstrap Form Elements
 
-This plug in assumes a form field of the following structure.
+This plugin assumes a form field of the following structure.
 
 When the field has an error, it sets has-error class in form-group, and appends a message to help-block.
-Of course you may customize with options.
+Of course you may customize with the plugin options.
 
     <div class="form-group">
       <label class="col-..." for="name">Name</label>
@@ -34,14 +34,14 @@ Of course you may customize with options.
     </div>
 
 
-## Setting
+## Settings
 
     $('form').rapidForm(options)
-    // Createing button
+
     $('#add').click(function() {
        $.fn.rapidForm.clickAdd();
     });
-    // Editiong button
+
     $('body').on('click', '.edit', function() {
         $.fn.rapidForm.clickEdit($(this));
     });
@@ -68,14 +68,21 @@ Refer to the source text.
 
 You must return the following arrangements in the function of the controller.
 
-reutrn json_encode(array('relaod' => true));
+    reutrn json_encode(array('relaod' => true));
 
-* errors
-    * Associative array of a field name and the message.
-* reload
-    * The true reloads a page.
-* redirect
-    * The url string of the redirection.
-* raw
-    * Associative array of a field name and the value when editiong.
+### errors
+
+Associative array of a field name and the message.
+
+### reload
+
+The true reloads a page.
+
+### redirect
+
+The url string of the redirection.
+
+### raw
+
+Associative array of a field name and the value when editiong.
 
