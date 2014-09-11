@@ -1,0 +1,18 @@
+{
+    "name": "rapidform",
+    "version": "1.0.0",
+    "title": "jQuery.rapidForm - jQuery Plugin for Bootstrap Form Elements and jQuery UI Dialog",
+    "author": {
+        "name": "Yoshiyuki Mikome",
+        "url": "http://www.rapidex.co.jp"
+    },
+    "dependencies": {
+        "jquery": ">=1.6.3"
+    },
+    "licenses": [{"type": "MIT", "url": "http://opensource.org/licenses/mit-license.php"}, {"type": "GPL", "url": "http://www.gnu.org/licenses/gpl-3.0.txt"}],
+    "files": ["jquery.rapidform/jquery.rapidform.js"],
+    "description": "Change the type of submit to button in the form set this plugin, you will get validations via ajax and direct drawing. And jQuery UI Dialog will be available to you more effectively!",
+    "keywords": ["rapidform","form","dialog","ajax","validation"],
+    "homepage": "https://github.com/rapidexp/jquery-rapidform",
+    "docs": "https://github.com/rapidexp/jquery-rapidform"
+}
