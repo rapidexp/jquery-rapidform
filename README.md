@@ -58,11 +58,11 @@ Refer to the source text.
 * The data-raw attribute is sequence of the field values used when editing button was clicked.
 
 
-    &lt;tr id="template" style="display:none"
-        data-template="{{{json_encode(array('.link a'=&gt;'data-action,data-row','.name'=&gt;'text'))}}}"&gt;
-        &lt;td class="link"&gt;&lt;a data-action="user/hoge/{id}/edit" data-raw=""&gt;Edit&lt;/a&gt;&lt;/td&gt;
-        &lt;td class="name"&gt;{name}&lt;/td&gt;
-    &lt;/tr&gt;
+        <tr id="template" style="display:none"
+            data-template="{{{json_encode(array('.link a'=>'data-action,data-row','.name'=>'text'))}}}">
+            <td class="link"><a data-action="user/hoge/{id}/edit" data-raw="">Edit</a></td>
+            <td class="name">{name}</td>
+        </tr>
 
 
 ## Results of ajax
