@@ -1,7 +1,7 @@
 /**
  * ---------------------------------------------------------------
  * jQuery.rapidForm
- * version 1.0.0
+ * version 1.1.0
  *
  * Author: by Yoshiyuki Mikome https://github.com/rapidexp/jquery-rapidform
  *
@@ -80,6 +80,14 @@
  *   redirect	The url string of the redirection.
  *   raw		Associative array of a field name and the value when editiong.
  *
+ * ---------------------------------------------------------------
+ * Histories
+ *
+ * 1.1.0 (2014-09-12)
+ *  - Add a option of alert.
+ *  - Change specifications of beforRemove.
+ *
+ * 1.0.0 (2014-09-11)
  */
 
 
@@ -105,16 +113,35 @@
 			formGroup:      '.form-group',	// Parent of form field
 			helpBlock:      '.help-block',	// Container of error message
 			formGroupClass: 'has-error',	// Class of parent when error
-			helpBlockIcon:  '<i class="fa fa-warning"></i>',
-			confirmMessage:	'Are you sure?',
-			confirm:	function($form) {
-				// Deferred function of the confirmation before deletiion.
-				// You can expand using ajax.
+			helpBlockContent:  '<i class="fa fa-warning"></i> {message}',
+			alert:			'#alert',
+			alertSuccess:	'<div class="alert alert-success fade in">' +
+							'<button type="button" class="close" data-dismiss="alert">' +
+							'<i class="fa fa-times"></i>' +
+							'</button>' +
+							'<i class="fa-fw fa fa-check"></i>' +
+							'<strong>Success!</strong> {message}' +
+							'</div>',
+			alertError:		'<div class="alert alert-danger fade in">' +
+							'<button type="button" class="close" data-dismiss="alert">' +
+							'<i class="fa fa-times"></i>' +
+							'</button>' +
+							'<i class="fa-fw fa fa-warning"></i>' +
+							'<strong>Error!</strong> {message}' +
+							'</div>',
+			beforeRemove:	'Are you sure?',
+			beforeRemoveCallback: function() {
 				var d = new $.Deferred;
-				(confirm(opts.confirmMessage)) ? d.resolve() : d.reject();
+				(!opts.beforeRemove || confirm(opts.beforeRemove)) ? d.resolve() : d.reject();
 				return d.promise();
 			},
-			submited:		null,			// Callback after the submit
+			beforeSubmit:	null,
+			beforeSubmitCallback: function() {
+				var d = new $.Deferred;
+				(!opts.beforeSubmit || confirm(opts.beforeSubmit)) ? d.resolve() : d.reject();
+				return d.promise();
+			},
+			afterSubmit:	null,			// Callback after the submit
 
 			// Dialogs
 
@@ -124,7 +151,7 @@
 			titleEdit:      'Edit',			// Title of editing dialog
 			width:	        '80%',
 			template:       '#template',    // Selectors of template
-			container:      'tbody',
+			container:      '#tbody',
 			row:            'tr:visible',
 			insertAfter:    null,			// To return index of insertion position
 			insertBefore:	null,			//
@@ -208,106 +235,120 @@
 		$forms.each(function() {
 			var $form = $(this);
 
-			// Click creating buttton
+			// Sumit
 
 			$form.find(opts.submit + ',' + opts.submitContinue).filter(':button')
 			.click(function() {
-				var $button = $(this);
-				// Remove last errors
-				$form.find(opts.helpBlock).text('').hide();
-				$form.find(opts.formGroup).removeClass(opts.formGroupClass);
+				opts.beforeSubmitCallback($form).done(function() {
+					var $button = $(this);
+					// Remove last errors
+					$form.find(opts.helpBlock).text('').hide();
+					$form.find(opts.formGroup).removeClass(opts.formGroupClass);
 
-				// Save via ajax
-				$.ajax({
-					url:  $form.attr('action'),
-					data: new FormData($form[0]),
-					contentType: false,	// FormData makes appropriate contentType
-					processData: false, // Do not convert to query sting for file transmission
-					type: 'post',
-					dataType: 'json'
-				})
-				.done(function(results) {
-					var key, $formGroup, $helpBlock,
-						$template, rules,
-						$container, $target;
+					// Save via ajax
+					$.ajax({
+						url:  $form.attr('action'),
+						data: new FormData($form[0]),
+						contentType: false,	// FormData makes appropriate contentType
+						processData: false, // Do not convert to query string for file transmission
+						type: 'post',
+						dataType: 'json'
+					})
+					.done(function(results) {
+						var key, $formGroup, $helpBlock,
+							$template, rules,
+							$container, $target;
 
-					// Draw errors in a form
-					if (results && results.errors) {
-						for(key in results.errors) {
-							$formGroup = $form.find('[name="'+key+'"],[for="'+key+'"]').parents(opts.formGroup);
-							$helpBlock = $formGroup.find(opts.helpBlock);
-							$formGroup.addClass(opts.formGroupClass);
-							$helpBlock.show().html(opts.helpBlockIcon + results.errors[key]);
+						// Draw errors in a form
+
+						if (results && results.errors) {
+							for(key in results.errors) {
+								$formGroup = $form.find('[name="'+key+'"],[for="'+key+'"]').parents(opts.formGroup);
+								$helpBlock = $formGroup.find(opts.helpBlock);
+								$formGroup.addClass(opts.formGroupClass);
+								$helpBlock.show().html(opts.helpBlockContent.replace(/\{message\}/, results.errors[key]));
+							}
+							return;
 						}
-						return;
-					}
 
-					if (opts.submited) {
-						opts.submited($form, results);
-					}
-
-					// Redirect
-					if (results) {
-						if (results.reload) { location.reload(); return; }
-						if (results.redirect) { location.href = results.redirect; return; }
-					}
-
-					if (opts.dialog && $form.parents(opts.dialog).length &&
-						$button.is(opts.submit)) {
-						// Close a dialog without any errors
-						$(opts.dialog).dialog('close');
-					} else if (results && results.form == 'clear' ||
-							   $button.is(opts.submitContinue)) {
-						// Delete input values when form is in page.
-						$form.find('input:not(:checkbox,:radio), textarea').val('');
-					}
-
-					//
-					// Update a page with the template
-					//
-
-					if (results && results.raw) {
-						$template = $(opts.template).clone().show();
-						rules = $template.data('template');
-						$template.removeAttr('id data-template');
-
-						// Editing
-						if ($edit_button) {
-							$current = $edit_button.parents(opts.row+':first');
-							replace_variables($current, rules, results.raw, $template);
+						if (opts.afterSubmit) {
+							opts.afterSubmit($form, results);
 						}
-						// Creating
-						else {
-							replace_variables($template, rules, results.raw);
 
-							$container = $(opts.container);
-							$target = null;
-							if (opts.insertAfter) {
-								index = opts.insertAfter($container, results.raw);
-								if (index != null) {
-									$target = $container.find(opts.row).eq(index);
-									$template.insertAfter($target);
+						// Redirect
+
+						if (results && results.reload) { location.reload(); return; }
+						if (results && results.redirect) { location.href = results.redirect; return; }
+
+						// Close dialog or Refresh form
+
+						if (opts.dialog && $form.parents(opts.dialog).length &&
+							$button.is(opts.submit)) {
+							// Close a dialog without any errors
+							$(opts.dialog).dialog('close');
+						} else if (results && results.form == 'clear' ||
+								   $button.is(opts.submitContinue)) {
+							// Delete input values when form is in page.
+							$form.find('input:not(:checkbox,:radio), textarea').val('');
+						}
+
+						// Alert message
+
+						if (results && results.alertSuccess) {
+							$(opts.alert).html(
+								opts.alertSuccess.replace(/\{message\}/, results.alertSuccess));
+						}
+
+						if (results && results.alertError) {
+							$(opts.alert).html(
+								opts.alertError.replace(/\{message\}/, results.alertSuccess));
+						}
+
+						// Update a page with the template
+
+						if (results && results.raw) {
+							$template = $(opts.template).clone().show();
+							rules = $template.data('template');
+							$template.removeAttr('id data-template');
+
+							// Editing
+							if ($edit_button) {
+								$current = $edit_button.parents(opts.row+':first');
+								replace_variables($current, rules, results.raw, $template);
+							}
+							// Creating
+							else {
+								replace_variables($template, rules, results.raw);
+
+								$container = $(opts.container);
+								$target = null;
+								if (opts.insertAfter) {
+									index = opts.insertAfter($container, results.raw);
+									if (index != null) {
+										$target = $container.find(opts.row).eq(index);
+										$template.insertAfter($target);
+									}
+								} else if (opts.insertBefore) {
+									index = opts.insertBefore($container, results.raw);
+									if (index != null) {
+										$target = $container.find(opts.row).eq(index);
+										$template.insertBefore($target);
+									}
 								}
-							} else if (opts.insertBefore) {
-								index = opts.insertBefore($container, results.raw);
-								if (index != null) {
-									$target = $container.find(opts.row).eq(index);
-									$template.insertBefore($target);
+								if (!$target)  {
+									$template.appendTo($container);
 								}
 							}
-							if (!$target)  {
-								$template.appendTo($container);
-							}
 						}
-					}
+					});
 				});
 			});
 
-			// Click editing button
+			// Remove
 
 			$form.find(opts.remove)//.unbind('click')
 			.click(function() {
-				opts.confirm($form).done(function() {
+				opts.beforeRemoveCallback($form).done(function() {
 					// Remove last errors
 					$form.find(opts.helpBlock).text('').hide();
 					$form.find(opts.formGroup).removeClass(opts.formGroupClass);
@@ -326,7 +367,7 @@
 								$formGroup = $form.find('[name="'+key+'"],[for="'+key+'"]').parents(opts.formGroup);
 								$helpBlock = $formGroup.find(opts.helpBlock);
 								$formGroup.addClass(opts.formGroupClass);
-								$helpBlock.show().html(opts.helpBlockIcon + results.errors[key]);
+								$helpBlock.show().html(opts.helpBlockContent.replace(/\{message\}/, results.errors[key]));
 							}
 							return;
 						}
