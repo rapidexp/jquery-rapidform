@@ -83,6 +83,8 @@
  * ---------------------------------------------------------------
  * Histories
  *
+ * 1.1.2 (2014-09-17)
+ *  - Change specifications of confirm agin.
  * 1.1.1 (2014-09-16)
  *  - Add suport of data-action on form.
  *  - Add parameter of title to click utirities.
@@ -132,16 +134,16 @@
 							'<i class="fa-fw fa fa-warning"></i>' +
 							'<strong>Error!</strong> {message}' +
 							'</div>',
-			beforeRemove:	'Are you sure?',
-			beforeRemoveCallback: function() {
+			confirmRemove:	'Are you sure?',
+			beforeRemove: function() {
 				var d = new $.Deferred;
-				(!opts.beforeRemove || confirm(opts.beforeRemove)) ? d.resolve() : d.reject();
+				(!opts.confirmRemove || confirm(opts.confirmRemove)) ? d.resolve() : d.reject();
 				return d.promise();
 			},
-			beforeSubmit:	null,
-			beforeSubmitCallback: function() {
+			confirmSubmit:	null,
+			beforeSubmit: function() {
 				var d = new $.Deferred;
-				(!opts.beforeSubmit || confirm(opts.beforeSubmit)) ? d.resolve() : d.reject();
+				(!opts.confirmSubmit || confirm(opts.confirmSubmit)) ? d.resolve() : d.reject();
 				return d.promise();
 			},
 			afterSubmit:	null,			// Callback after the submit
@@ -242,7 +244,7 @@
 
 			$form.find(opts.submit + ',' + opts.submitContinue).filter(':button')
 			.click(function() {
-				opts.beforeSubmitCallback($form).done(function() {
+				opts.beforeSubmit($form).done(function() {
 					var $button = $(this);
 					// Remove last errors
 					$form.find(opts.helpBlock).text('').hide();
@@ -351,7 +353,7 @@
 
 			$form.find(opts.remove)//.unbind('click')
 			.click(function() {
-				opts.beforeRemoveCallback($form).done(function() {
+				opts.beforeRemove($form).done(function() {
 					// Remove last errors
 					$form.find(opts.helpBlock).text('').hide();
 					$form.find(opts.formGroup).removeClass(opts.formGroupClass);
