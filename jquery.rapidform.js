@@ -83,6 +83,9 @@
  * ---------------------------------------------------------------
  * Histories
  *
+ * 1.1.1 (2014-09-16)
+ *  - Add suport of data-action on form.
+ *  - Add parameter of title to click utirities.
  * 1.1.0 (2014-09-12)
  *  - Add a option of alert.
  *  - Change specifications of beforRemove.
@@ -146,7 +149,7 @@
 			// Dialogs
 
 			dialog:         null,
-			urlAdd:         '',				// Action of creating dialog
+			urlAdd:         null,			// Action of creating dialog
 			titleAdd:       'Create',		// Title of creating dialog
 			titleEdit:      'Edit',			// Title of editing dialog
 			width:	        '80%',
@@ -417,11 +420,14 @@
 
 		open_dialog = function(dialog, title, url, rawData) {
 
-			$dialog = $(dialog);
+			var $dialog = $(dialog),
+				$form = $dialog.find('form');
 
 			// Set url in action
 			if (url) {
-				$dialog.find('form').attr('action', url);
+				$form.attr('action', url);
+			} else if (url = $form.data('action')) {
+				$form.attr('action', url);
 			}
 
 			// Set field values
@@ -490,13 +496,15 @@
 		};
 
 
-		$.fn.rapidForm.clickAdd = function() {
+		$.fn.rapidForm.clickAdd = function(title) {
 			$edit_button = null;
-			open_dialog(opts.dialog, opts.titleAdd, opts.urlAdd);
+			if (!title) title = opts.titleAdd;
+			open_dialog(opts.dialog, title, opts.urlAdd);
 		};
 
-		$.fn.rapidForm.clickEdit = function(el) {
+		$.fn.rapidForm.clickEdit = function(el, title) {
 			$edit_button = el;
+			if (!title) title = opts.titleEdit;
 			var url, rawData;
 
 			url = $edit_button.data('action');
@@ -506,7 +514,7 @@
 			// Read not jQuery cash directly from DOM,
 			// because data-raw will be renewed by editing.
 			rawData = $.parseJSON($edit_button.attr('data-raw'));
-			open_dialog(opts.dialog, opts.titleEdit, url, rawData);
+			open_dialog(opts.dialog, title, url, rawData);
 		};
 
 		$.fn.rapidForm.clickCustom = function(dialog, title, url) {

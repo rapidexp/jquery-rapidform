@@ -18,18 +18,19 @@ And jQuery UI Dialog will be available to you more effectively!
 
 This plugin assumes a form field of the following structure.
 
-When the field has an error, it sets has-error class in form-group, and appends a message to help-block.  
+When the field has an error, it sets a class "has-error" at the form-group, and appends a message to the help-block.  
 Of course you may customize with the plugin options.
 
     <div class="form-group">
       <label class="col-..." for="name">Name</label>
       <div class="col-...">
-        <input class="form-control" type="text" value="">
-      </div>
-      <div class="col-...">
-        <span class="help-block" style="display;none">
-          <i class="fa fa-waring"></li>
-        <span>
+        <div class="col-...">
+          <input class="form-control" type="text" value="">
+        </div>
+        <div class="col-...">
+          <span class="help-block" style="display;none">
+          <span>
+        </div>
       </div>
     </div>
 
@@ -55,9 +56,15 @@ Refer to the source text.
 
 The template is a line data including {valiable}.
 
-    <tr id="template" style="display:none"
-        data-template="{{{json_encode(array('.link a'=>'data-action,data-row','.name'=>'text'))}}}">
-        <td class="link"><a data-action="user/hoge/{id}/edit" data-raw="">Edit</a></td>
+    <tr id="template" 
+        style="display:none"
+        data-template="{{{json_encode(array(
+           '.link a'=>'data-action,data-row',
+           '.name'=>'text'))}}}">
+        <td class="link">
+          <a data-action="user/hoge/{id}/edit" 
+             data-raw="{raw}">Edit</a>
+        </td>
         <td class="name">{name}</td>
     </tr>
 
@@ -72,7 +79,10 @@ You must return the following arrangements in the function of the controller.
     reutrn json_encode(array('relaod' => true));
 
 * errors:  
-Associative array of a field name and the message.
+The associative array of a field name and the message.
+
+* alertSuccess, alertError:  
+The message displayed at alert box.
 
 * reload:  
 The true reloads a page.
@@ -81,5 +91,5 @@ The true reloads a page.
 The url string of the redirection.
 
 * raw:  
-Associative array of a field name and the value when editiong.
+The associative array of field names and the values successed.
 
