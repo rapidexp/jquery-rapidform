@@ -83,8 +83,9 @@
  * ---------------------------------------------------------------
  * Histories
  *
- * 1.1.2 (2014-09-17)
+ * 1.1.2 (2014-09-18)
  *  - Change specifications of confirm agin.
+ *  - Fixed a bug of closing dialog.
  * 1.1.1 (2014-09-16)
  *  - Add suport of data-action on form.
  *  - Add parameter of title to click utirities.
@@ -244,8 +245,8 @@
 
 			$form.find(opts.submit + ',' + opts.submitContinue).filter(':button')
 			.click(function() {
+				var $button = $(this);
 				opts.beforeSubmit($form).done(function() {
-					var $button = $(this);
 					// Remove last errors
 					$form.find(opts.helpBlock).text('').hide();
 					$form.find(opts.formGroup).removeClass(opts.formGroupClass);
