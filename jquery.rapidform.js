@@ -1,7 +1,7 @@
 /**
  * ---------------------------------------------------------------
  * jQuery.rapidForm
- * version 1.1.0
+ * version 1.1.2
  *
  * Author: by Yoshiyuki Mikome https://github.com/rapidexp/jquery-rapidform
  *
@@ -83,7 +83,7 @@
  * ---------------------------------------------------------------
  * Histories
  *
- * 1.1.2 (2014-09-18)
+ * 1.1.2 (2014-09-22)
  *  - Change specifications of confirm agin.
  *  - Fixed a bug of closing dialog.
  * 1.1.1 (2014-09-16)
