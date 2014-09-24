@@ -1,7 +1,7 @@
 /**
  * ---------------------------------------------------------------
  * jQuery.rapidForm
- * version 1.1.2
+ * version 1.1.3
  *
  * Author: by Yoshiyuki Mikome https://github.com/rapidexp/jquery-rapidform
  *
@@ -83,6 +83,8 @@
  * ---------------------------------------------------------------
  * Histories
  *
+ * 1.1.3 (2014-09-22)
+ *  - Add parameters to utilities.
  * 1.1.2 (2014-09-22)
  *  - Change specifications of confirm agin.
  *  - Fixed a bug of closing dialog.
@@ -99,10 +101,11 @@
 
 ;(function($) {
 
+	var $edit_button;
+
 	$.fn.rapidForm = function(options) {
 
 		var $forms = $(this),	// Elements
-			$edit_button,
 			defaults,			// Options
 			opts,
 			replace_variables,	// Private functions
@@ -187,7 +190,7 @@
 				$el_target = (selector) ? $target.find(selector) : $template;
 
 				if ($el_template.length) {
-					attrs = rules[selector].split(/ *, */);
+					attrs = rules[selector].split(/[ ,]+/);
 					for (i = 0; i < attrs.length; i++ ) {
 						attr = attrs[i];
 						switch(attr) {
@@ -499,32 +502,31 @@
 		};
 
 
-		$.fn.rapidForm.clickAdd = function(title) {
+		$.fn.rapidForm.clickAdd = function(options) {
 			$edit_button = null;
-			if (!title) title = opts.titleAdd;
-			open_dialog(opts.dialog, title, opts.urlAdd);
+			opts = $.extend({}, defaults, options);
+			open_dialog(opts.dialog, opts.titleAdd, opts.urlAdd);
 		};
 
-		$.fn.rapidForm.clickEdit = function(el, title) {
+		$.fn.rapidForm.clickEdit = function(el, options) {
 			$edit_button = el;
-			if (!title) title = opts.titleEdit;
+			opts = $.extend({}, defaults, options);
 			var url, rawData;
 
-			url = $edit_button.data('action');
+			url = el.data('action');
 			if (!url) {
-				url = $edit_button.attr('href');
+				url = el.attr('href');
 			}
 			// Read not jQuery cash directly from DOM,
 			// because data-raw will be renewed by editing.
-			rawData = $.parseJSON($edit_button.attr('data-raw'));
-			open_dialog(opts.dialog, title, url, rawData);
+			rawData = $.parseJSON(el.attr('data-raw'));
+			open_dialog(opts.dialog, opts.titleEdit, url, rawData);
 		};
 
 		$.fn.rapidForm.clickCustom = function(dialog, title, url) {
 			$edit_button = null;
 			open_dialog(dialog, title, url);
 		};
-
 
 		// Set has-error when opening a page
 		$(opts.helpBlock + ':visible').parents(opts.formGroup).addClass(opts.formGroupClass);
@@ -533,6 +535,3 @@
 	};
 
 }) (jQuery);
-
-
-
