@@ -1,7 +1,7 @@
 /**
  * ---------------------------------------------------------------
  * jQuery.rapidForm
- * version 1.1.3
+ * version 1.1.4
  *
  * Author: by Yoshiyuki Mikome https://github.com/rapidexp/jquery-rapidform
  *
@@ -83,6 +83,8 @@
  * ---------------------------------------------------------------
  * Histories
  *
+ * 1.1.4 (2014-09-24)
+ *  - Rename utilities.
  * 1.1.3 (2014-09-24)
  *  - Add parameters to utilities.
  * 1.1.2 (2014-09-22)
@@ -502,28 +504,26 @@
 		};
 
 
-		$.fn.rapidForm.clickAdd = function(options) {
-			$edit_button = null;
-			opts = $.extend({}, defaults, options);
-			open_dialog(opts.dialog, opts.titleAdd, opts.urlAdd);
-		};
-
-		$.fn.rapidForm.clickEdit = function(el, options) {
+		$.fn.rapidForm.open = function(options, el) {
 			$edit_button = el;
 			opts = $.extend({}, defaults, options);
-			var url, rawData;
 
-			url = el.data('action');
-			if (!url) {
-				url = el.attr('href');
+			var url, rawData, title = opts.titleAdd;
+
+			if (el) {
+				title = opts.titleEdit;
+				url = el.data('action');
+				if (!url) {
+					url = el.attr('href');
+				}
+				// Read not jQuery cash directly from DOM,
+				// because data-raw will be renewed by editing.
+				rawData = $.parseJSON(el.attr('data-raw'));
 			}
-			// Read not jQuery cash directly from DOM,
-			// because data-raw will be renewed by editing.
-			rawData = $.parseJSON(el.attr('data-raw'));
-			open_dialog(opts.dialog, opts.titleEdit, url, rawData);
+			open_dialog(opts.dialog, title, url, rawData);
 		};
 
-		$.fn.rapidForm.clickCustom = function(dialog, title, url) {
+		$.fn.rapidForm.openCustom = function(dialog, title, url) {
 			$edit_button = null;
 			open_dialog(dialog, title, url);
 		};
