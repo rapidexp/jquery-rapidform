@@ -83,7 +83,7 @@
  * ---------------------------------------------------------------
  * Histories
  *
- * 1.1.3 (2014-09-22)
+ * 1.1.3 (2014-09-24)
  *  - Add parameters to utilities.
  * 1.1.2 (2014-09-22)
  *  - Change specifications of confirm agin.
